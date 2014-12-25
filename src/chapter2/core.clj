@@ -71,9 +71,28 @@
   (let [numerator-first-expression (reduce + (map * ratings-1 ratings-2))
         ratings-1-sum (reduce + ratings-1)
         ratings-2-sum (reduce + ratings-2)
-        numerator-second-expression (/ (* ratings-1 ratings-2) count(ratings-1))
+        numerator-second-expression (/ (* ratings-1-sum ratings-2-sum) (count ratings-1))
         numerator (- numerator-first-expression numerator-second-expression)
 
-        ratings-1-sum-elements-exponentials (map + ratings-1)]))
 
-ppp--(parexpt 5 )
+        ratings-1-sum-exponentials-elements (reduce +(map (fn [rating] ;#(expt % 2)
+                                                   (expt rating 2)) ratings-1))
+
+        ratings-1-exponential-sum-divided (/ (expt ratings-1-sum 2) (count ratings-1))
+
+        denominator-first-expression (sqrt (- ratings-1-sum-exponentials-elements ratings-1-exponential-sum-divided))
+
+
+        ratings-2-sum-exponentials-elements (reduce +(map (fn [rating] ;#(expt % 2)
+                                                   (expt rating 2)) ratings-2))
+
+        ratings-2-exponential-sum-divided (/ (expt ratings-2-sum 2) (count ratings-1))
+
+        denominator-second-expression (sqrt (- ratings-2-sum-exponentials-elements ratings-2-exponential-sum-divided))
+
+        denominator (* denominator-first-expression denominator-second-expression)]
+    (prn denominator-first-expression)
+    (/ numerator denominator)))
+
+
+(pearson-correlation (list 4.75 4.5 5 4.25 4) (list 4 3 5 2 1))
