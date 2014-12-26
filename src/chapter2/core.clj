@@ -7,24 +7,24 @@
 
 
 (def data
-	{:Hailey {"Broken Bells" 4,
-         "Deadmau5" 1,
-         "Norah Jones" 4,
-         "The Strokes" 4,
-         "Vampire Weekend" 1}
+  {:Hailey {"Broken Bells" 4,
+            "Deadmau5" 1,
+            "Norah Jones" 4,
+            "The Strokes" 4,
+            "Vampire Weekend" 1}
 
-	 :Veronica {"Blues Traveler" 3,
-            "Norah Jones" 5,
-            "Phoenix" 4,
-            "Slightly Stoopid" 2.5,
-            "The Strokes" 3}
-  	 :Jordyn {"Broken Bells" 4.5,
-              "Deadmau5" 4,
+   :Veronica {"Blues Traveler" 3,
               "Norah Jones" 5,
-              "Phoenix" 5,
-              "Slightly Stoopid" 4.5,
-              "The Strokes" 4,
-              "Vampire Weekend" 4.0}}
+              "Phoenix" 4,
+              "Slightly Stoopid" 2.5,
+              "The Strokes" 3}
+   :Jordyn {"Broken Bells" 4.5,
+            "Deadmau5" 4,
+            "Norah Jones" 5,
+            "Phoenix" 5,
+            "Slightly Stoopid" 4.5,
+            "The Strokes" 4,
+            "Vampire Weekend" 4.0}}
   )
 
 
@@ -34,9 +34,9 @@
   (let [user-1-data (user-1 data)
         user-2-data (user-2 data)
         data-intersection (intersection (set (keys user-1-data))
-              (set (keys user-2-data)))]
+                                        (set (keys user-2-data)))]
     [(select-values user-1-data data-intersection)
-    (select-values user-2-data data-intersection)]))
+     (select-values user-2-data data-intersection)]))
 
 
 
@@ -48,19 +48,19 @@
 
 (defn nearest-neighbor [user]
   (let [other-users (remove (hash-set user) (keys data))]
-  (sort-by last (apply merge
-                      (map (fn x [neighbor]
-         					{neighbor (apply manhattan-distance
-                				(common-users-ratings user neighbor))})
-                   		other-users)))))
+    (sort-by last (apply merge
+                         (map (fn x [neighbor]
+                                {neighbor (apply manhattan-distance
+                                                 (common-users-ratings user neighbor))})
+                              other-users)))))
 
 
 (defn recommend [user]
   (let [nearest (first (first (nearest-neighbor user)))]
-	(sort-by last > (apply merge(map (fn x [band]
-           {band (get (nearest data) band)})
-         (remove (set (keys (user data)))
-			(set (keys(nearest data))))))))
+    (sort-by last > (apply merge(map (fn x [band]
+                                       {band (get (nearest data) band)})
+                                     (remove (set (keys (user data)))
+                                             (set (keys(nearest data))))))))
   )
 
 (recommend :Hailey)
