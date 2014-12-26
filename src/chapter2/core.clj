@@ -5,7 +5,6 @@
 (use 'clojure.set)
 (use 'clojure.math.numeric-tower)
 
-
 (def data
   {:Hailey {"Broken Bells" 4,
             "Deadmau5" 1,
@@ -28,30 +27,27 @@
   )
 
 
-(def select-values (comp vals select-keys))
-
 (defn common-users-ratings [user-1 user-2]
   (let [user-1-data (user-1 data)
         user-2-data (user-2 data)
-        data-intersection (intersection (set (keys user-1-data))
-                                        (set (keys user-2-data)))]
-    [(select-values user-1-data data-intersection)
-     (select-values user-2-data data-intersection)]))
+        bands-in-common (keys (select-keys user-1-data (keys user-2-data)))
 
+        users-ratings (fn [band]
+                        [(user-1-data band) (user-2-data band)])]
 
+    (map users-ratings bands-in-common)))
 
-(defn manhattan-distance [ratings-a ratings-b]
-  (reduce +
-          (map (comp abs -) ratings-a ratings-b)))
-
+(defn manhattan-distance [ratings]
+  (->> ratings
+       (map (fn [[a b]] (abs (- a b))))
+       (reduce + 0)))
 
 
 (defn nearest-neighbor [user]
-  (let [other-users (remove (hash-set user) (keys data))]
+  (let [other-users (remove #{user} (keys data))]
     (sort-by last (apply merge
-                         (map (fn x [neighbor]
-                                {neighbor (apply manhattan-distance
-                                                 (common-users-ratings user neighbor))})
+                         (map (fn [neighbor]
+                                {neighbor (manhattan-distance (common-users-ratings user neighbor))})
                               other-users)))))
 
 
