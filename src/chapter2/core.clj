@@ -31,10 +31,7 @@
   (let [user-1-data (user-1 data)
         user-2-data (user-2 data)
         bands-in-common (keys (select-keys user-1-data (keys user-2-data)))
-
-        users-ratings (fn [band]
-                        [(user-1-data band) (user-2-data band)])]
-
+        users-ratings (fn [band] [(user-1-data band) (user-2-data band)])]
     (map users-ratings bands-in-common)))
 
 (defn manhattan-distance [ratings]
@@ -42,14 +39,11 @@
        (map (fn [[a b]] (abs (- a b))))
        (reduce + 0)))
 
-
 (defn nearest-neighbor [user]
   (let [other-users (remove #{user} (keys data))]
-    (sort-by last (apply merge
-                         (map (fn [neighbor]
-                                {neighbor (manhattan-distance (common-users-ratings user neighbor))})
-                              other-users)))))
-
+    (->> other-users
+         (map (fn [neighbor] [neighbor (manhattan-distance (common-users-ratings user neighbor))]))
+         (sort-by last))))
 
 (defn recommend [user]
   (let [nearest (first (first (nearest-neighbor user)))]
