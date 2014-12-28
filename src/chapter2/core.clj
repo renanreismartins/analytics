@@ -46,12 +46,15 @@
          (sort-by last))))
 
 (defn recommend [user]
-  (let [nearest (first (first (nearest-neighbor user)))]
-    (sort-by last > (apply merge(map (fn x [band]
-                                       {band (get (nearest data) band)})
-                                     (remove (set (keys (user data)))
-                                             (set (keys(nearest data))))))))
-  )
+  (let [nearest (ffirst(nearest-neighbor user))
+        user-bands (set (keys (user data)))
+        nearest-bands (keys (nearest data))
+        not-in-common-bands (remove user-bands nearest-bands)]
+
+    (->> not-in-common-bands
+         (map (fn [band] [band ((nearest data) band)]))
+         (sort-by last >))))
+
 
 (recommend :Hailey)
 
