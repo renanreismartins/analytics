@@ -59,16 +59,16 @@
 (recommend :Hailey)
 
 
+(defn exponential-sum-divided [ratings]
+  (/ (expt (reduce + ratings) 2) (count ratings)))
+
 (defn sum-exponentials [ratings]
   (reduce + (map (fn [rating] ;#(expt % 2)
                   (expt rating 2)) ratings)))
 
-(defn exponential-sum-divided [ratings ratings-sum]
-  (/ (expt ratings-sum 2) (count ratings)))
-
 (defn denominator-common-expression [ratings]
   (let [ratings-sum-exponentials (sum-exponentials ratings)
-        ratings-exponential-sum-divided (exponential-sum-divided ratings (reduce + ratings))]
+        ratings-exponential-sum-divided (exponential-sum-divided ratings)]
     (sqrt (- ratings-sum-exponentials ratings-exponential-sum-divided))))
 
 (defn calc-denominator [ratings-1 ratings-2]
