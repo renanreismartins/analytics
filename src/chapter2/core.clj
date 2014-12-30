@@ -59,33 +59,32 @@
 (recommend :Hailey)
 
 
-
-(defn sum-exponentials-elements [ratings]
-  (reduce +(map (fn [rating] ;#(expt % 2)
+(defn sum-exponentials [ratings]
+  (reduce + (map (fn [rating] ;#(expt % 2)
                   (expt rating 2)) ratings)))
 
 (defn exponential-sum-divided [ratings ratings-sum]
   (/ (expt ratings-sum 2) (count ratings)))
 
-(defn denominator-common-expression [ratings-sum-exponentials-elements ratings-exponential-sum-divided]
-  (sqrt (- ratings-sum-exponentials-elements ratings-exponential-sum-divided)))
-
-(defn denominator-common-expression [ratings ratings-sum]
-  (let [ratings-sum-exponentials-elements (sum-exponentials-elements ratings)
-        ratings-exponential-sum-divided (exponential-sum-divided ratings ratings-sum)]
-    (sqrt (- ratings-sum-exponentials-elements ratings-exponential-sum-divided))))
+(defn denominator-common-expression [ratings]
+  (let [ratings-sum-exponentials (sum-exponentials ratings)
+        ratings-exponential-sum-divided (exponential-sum-divided ratings (reduce + ratings))]
+    (sqrt (- ratings-sum-exponentials ratings-exponential-sum-divided))))
 
 
-(defn pearson-correlation [ratings-1 ratings-2]
+(defn calc-numerator [ratings-1 ratings-2]
   (let [numerator-first-expression (reduce + (map * ratings-1 ratings-2))
         ratings-1-sum (reduce + ratings-1)
         ratings-2-sum (reduce + ratings-2)
-        numerator-second-expression (/ (* ratings-1-sum ratings-2-sum) (count ratings-1))
-        numerator (- numerator-first-expression numerator-second-expression)
+        numerator-second-expression (/ (* ratings-1-sum ratings-2-sum) (count ratings-1))]
+    (- numerator-first-expression numerator-second-expression)))
 
+(defn pearson-correlation [ratings-1 ratings-2]
+  (let [
+        numerator (calc-numerator ratings-1 ratings-2)
 
-        denominator-first-expression (denominator-common-expression ratings-1 ratings-1-sum)
-        denominator-second-expression (denominator-common-expression ratings-2 ratings-2-sum)
+        denominator-first-expression (denominator-common-expression ratings-1)
+        denominator-second-expression (denominator-common-expression ratings-2)
 
         denominator (* denominator-first-expression denominator-second-expression)]
     (/ numerator denominator)))
