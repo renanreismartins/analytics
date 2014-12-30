@@ -71,6 +71,11 @@
         ratings-exponential-sum-divided (exponential-sum-divided ratings (reduce + ratings))]
     (sqrt (- ratings-sum-exponentials ratings-exponential-sum-divided))))
 
+(defn calc-denominator [ratings-1 ratings-2]
+  (let [denominator-first-expression (denominator-common-expression ratings-1)
+        denominator-second-expression (denominator-common-expression ratings-2)]
+    (* denominator-first-expression denominator-second-expression)))
+
 
 (defn calc-numerator [ratings-1 ratings-2]
   (let [numerator-first-expression (reduce + (map * ratings-1 ratings-2))
@@ -80,16 +85,8 @@
     (- numerator-first-expression numerator-second-expression)))
 
 (defn pearson-correlation [ratings-1 ratings-2]
-  (let [
-        numerator (calc-numerator ratings-1 ratings-2)
-
-        denominator-first-expression (denominator-common-expression ratings-1)
-        denominator-second-expression (denominator-common-expression ratings-2)
-
-        denominator (* denominator-first-expression denominator-second-expression)]
-    (/ numerator denominator)))
-
-
+  (/ (calc-numerator ratings-1 ratings-2)
+     (calc-denominator ratings-1 ratings-2)))
 
 
 (pearson-correlation (list 4.75 4.5 5 4.25 4) (list 4 3 5 2 1))
