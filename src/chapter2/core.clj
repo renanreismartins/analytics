@@ -70,6 +70,12 @@
 (defn denominator-common-expression [ratings-sum-exponentials-elements ratings-exponential-sum-divided]
   (sqrt (- ratings-sum-exponentials-elements ratings-exponential-sum-divided)))
 
+(defn denominator-common-expression [ratings ratings-sum]
+  (let [ratings-sum-exponentials-elements (sum-exponentials-elements ratings)
+        ratings-exponential-sum-divided (exponential-sum-divided ratings ratings-sum)]
+    (sqrt (- ratings-sum-exponentials-elements ratings-exponential-sum-divided))))
+
+
 (defn pearson-correlation [ratings-1 ratings-2]
   (let [numerator-first-expression (reduce + (map * ratings-1 ratings-2))
         ratings-1-sum (reduce + ratings-1)
@@ -78,14 +84,8 @@
         numerator (- numerator-first-expression numerator-second-expression)
 
 
-        ratings-1-sum-exponentials-elements (sum-exponentials-elements ratings-1)
-        ratings-1-exponential-sum-divided (exponential-sum-divided ratings-1 ratings-1-sum)
-        denominator-first-expression (denominator-common-expression ratings-1-sum-exponentials-elements ratings-1-exponential-sum-divided)
-
-
-        ratings-2-sum-exponentials-elements (sum-exponentials-elements ratings-2)
-        ratings-2-exponential-sum-divided (exponential-sum-divided ratings-2 ratings-2-sum)
-        denominator-second-expression (denominator-common-expression ratings-2-sum-exponentials-elements ratings-2-exponential-sum-divided)
+        denominator-first-expression (denominator-common-expression ratings-1 ratings-1-sum)
+        denominator-second-expression (denominator-common-expression ratings-2 ratings-2-sum)
 
         denominator (* denominator-first-expression denominator-second-expression)]
     (/ numerator denominator)))
