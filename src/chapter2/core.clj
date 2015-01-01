@@ -91,3 +91,32 @@
 
 
 (pearson-correlation (list 4.75 4.5 5 4.25 4) (list 4 3 5 2 1))
+
+
+(defn k-nearest-neighbor [user k]
+  (let [k-nearest-neighbors (take k (nearest-neighbor user))
+        neighbors-ratings (map #(second %) k-nearest-neighbors)
+        distance (reduce + 0 neighbors-ratings)
+
+        neighbor-and-weight (map (fn [[neighbor rating]]
+                                   [neighbor (/ rating distance)]) k-nearest-neighbors)
+
+        neighbors-and-not-in-common-bands (map (fn [[neighbor weight]]
+                                                 (let [user-bands (keys (user data)); dissoc
+                                                       neighbor-bands (neighbor data)]
+                                                   [neighbor (apply dissoc neighbor-bands user-bands)]))
+                                               neighbor-and-weight)
+        neighbors-and-not-in-common-bands-map (reduce (fn [acc [user ratings]]
+                                                        (assoc acc user ratings)) {} neighbors-and-not-in-common-bands)]
+
+    neighbors-and-not-in-common-bands-map))
+
+
+        ;(map (fn [[band rate]]
+        ;       [band (* rate ())] ) (:Jordyn neighbors-and-not-in-common-bands-map))
+
+
+
+(k-nearest-neighbor :Veronica 2)
+
+;(nearest-neighbor :Veronica)
