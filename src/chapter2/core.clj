@@ -126,7 +126,7 @@
     (- numerator-first-expression numerator-second-expression)))
 
 (defn pearson-correlation [ratings-1 ratings-2] ;use let here
-  (if (zero? (calc-denominator ratings-1 ratings-2))
+  (if (zero? (calc-denominator ratings-1 ratings-2)) ; and pattern matching
     0
     (/ (calc-numerator ratings-1 ratings-2)
        (calc-denominator ratings-1 ratings-2))))
