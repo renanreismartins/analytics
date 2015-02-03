@@ -31,16 +31,13 @@
 
 
 (defn common-ratings [band1 band2]
-  (let [have-in-common (filter #(and (% band1)
-                                     (% band2))
-                               (vals data))]
-
-    (map (fn [ratings]
-           (vals ratings)) have-in-common)))
+  (filter #(and ((second %) band1)
+                ((second %) band2)) data))
 
 
-(defn user-average-rating [ratings]
-  (/ (apply + ratings) (count ratings)))
+(defn user-average-rating [user-and-ratings]
+  (let [ratings (vals (second user-and-ratings))]
+    [(first user-and-ratings) (/ (apply + ratings) (count ratings))]))
 
 
 (defn adjusted [band1 band2]
