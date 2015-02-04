@@ -30,6 +30,7 @@
 
 
 
+
 (defn user-ratings-with-common-bands [bands]
   (filter #(every? (second %) bands) data))
 
@@ -42,6 +43,9 @@
 (defn user-and-average-rating [& bands]
   (map user-average-rating (user-ratings-with-common-bands bands)))
 
+(user-and-average-rating "Kacey Musgraves" "Imagine Dragons")
+
+(common-ratings "Kacey Musgraves" "Imagine Dragons")
 
 
 (user-and-average-rating "Kacey Musgraves" "Imagine Dragons")
