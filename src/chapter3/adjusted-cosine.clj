@@ -30,9 +30,8 @@
 
 
 
-(defn common-ratings [band1 band2]
-  (filter #(and ((second %) band1)
-                ((second %) band2)) data))
+(defn common-ratings [& bands]
+  (filter #(every? (second %) bands) data))
 
 
 (defn user-average-rating [user-and-ratings]
@@ -40,11 +39,12 @@
     [(first user-and-ratings) (/ (apply + ratings) (count ratings))]))
 
 
-(defn adjusted [band1 band2]
-  (map user-average-rating (common-ratings band1 band2)))
+(defn user-and-average-rating [& bands]
+  (map user-average-rating (common-ratings bands)))
 
-
-
-(adjusted "Kacey Musgraves" "Imagine Dragons")
+(user-and-average-rating "Kacey Musgraves" "Imagine Dragons")
 
 (common-ratings "Kacey Musgraves" "Imagine Dragons")
+
+
+
