@@ -31,13 +31,10 @@
   )
 
 
-
 (def select-values (comp vals select-keys))
-
 
 (defn user-ratings-with-common-bands [bands]
   (filter #(every? (second %) bands) data))
-
 
 (defn to-user-and-average-rating [[user ratings]]
   (let [ratings (vals ratings)]
@@ -46,24 +43,22 @@
 (defn user-ratings-for-bands [bands [user band-ratings]]
   {user {:ratings (select-values band-ratings bands)}})
 
-(defn bands-to-user-and-average-rating [bands]
+(defn calc-normalized-ratings [ratings-and-average]
+  (map (fn [rating]
+         (- rating (:average ratings-and-average)))
+       (:ratings ratings-and-average)))
+
+(defn multiply-and-sum [normalized-ratings]
+  (reduce + (map (fn [[rating1 rating2]] (* rating1 rating2)) normalized-ratings)))
+
+(defn numerator [bands]
   (let [v-user-ratings-with-common-bands (user-ratings-with-common-bands bands)
         users-and-average-rating (reduce conj {} (map to-user-and-average-rating v-user-ratings-with-common-bands))
-        users-and-ratings (reduce conj {} (map (partial user-ratings-for-bands bands) v-user-ratings-with-common-bands))]
-    (merge-with union users-and-average-rating users-and-ratings)))
+        users-and-ratings (reduce conj {} (map (partial user-ratings-for-bands bands) v-user-ratings-with-common-bands))
+        users-and-ratings-and-average (merge-with union users-and-average-rating users-and-ratings)
+        normalized-ratings (map calc-normalized-ratings (vals users-and-ratings-and-average))]
+    (multiply-and-sum normalized-ratings)))
 
 
-
-
-
-(defn calc-normalized-ratings [ratings-and-average]
-  (reduce (fn [acc rating]
-            (* (- rating (:average ratings-and-average)))) (:ratings ratings-and-average)))
-
-(calc-normalized-ratings {:ratings '(4.0 5.0), :average 4.25})
-
-
-(user-ratings-with-common-bands ["Kacey Musgraves" "Imagine Dragons"])
-
-(bands-to-user-and-average-rating ["Kacey Musgraves" "Imagine Dragons"])
+(numerator ["Kacey Musgraves" "Imagine Dragons"])
 
