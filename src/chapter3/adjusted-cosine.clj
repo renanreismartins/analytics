@@ -1,3 +1,5 @@
+(use 'clojure.set)
+
 (def data
   {
    :David {"Imagine Dragons" 3.0
@@ -30,22 +32,38 @@
 
 
 
+(def select-values (comp vals select-keys))
+
 
 (defn user-ratings-with-common-bands [bands]
   (filter #(every? (second %) bands) data))
 
 
-(defn user-average-rating [user-and-ratings]
-  (let [ratings (vals (second user-and-ratings))]
-    [(first user-and-ratings) (/ (apply + ratings) (count ratings))]))
+(defn to-user-and-average-rating [[user ratings]]
+  (let [ratings (vals ratings)]
+    {user {:average (/ (apply + ratings) (count ratings))}}))
+
+(defn user-ratings-for-bands [bands [user band-ratings]]
+  {user {:ratings (select-values band-ratings bands)}})
+
+(defn bands-to-user-and-average-rating [bands]
+  (let [v-user-ratings-with-common-bands (user-ratings-with-common-bands bands)
+        users-and-average-rating (reduce conj {} (map to-user-and-average-rating v-user-ratings-with-common-bands))
+        users-and-ratings (reduce conj {} (map (partial user-ratings-for-bands bands) v-user-ratings-with-common-bands))]
+    (merge-with union users-and-average-rating users-and-ratings)))
 
 
-(defn user-and-average-rating [& bands]
-  (map user-average-rating (user-ratings-with-common-bands bands)))
-
-(user-and-average-rating "Kacey Musgraves" "Imagine Dragons")
-
-(common-ratings "Kacey Musgraves" "Imagine Dragons")
 
 
-(user-and-average-rating "Kacey Musgraves" "Imagine Dragons")
+
+(defn calc-normalized-ratings [ratings-and-average]
+  (reduce (fn [acc rating]
+            (* (- rating (:average ratings-and-average)))) (:ratings ratings-and-average)))
+
+(calc-normalized-ratings {:ratings '(4.0 5.0), :average 4.25})
+
+
+(user-ratings-with-common-bands ["Kacey Musgraves" "Imagine Dragons"])
+
+(bands-to-user-and-average-rating ["Kacey Musgraves" "Imagine Dragons"])
+
